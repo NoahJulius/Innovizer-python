@@ -1,0 +1,63 @@
+import tkinter as tk
+from tkinter import ttk
+
+import sqlite3
+verbindung = sqlite3.connect("geburtstage.db")
+zeiger = verbindung.cursor()
+zeiger.execute("SELECT nachname, geburtstag FROM personen")
+inhalt = zeiger.fetchall()
+print(inhalt)
+
+
+
+
+class SampleApp(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self._frame = None
+        self.switch_frame(StartPage)
+
+    def switch_frame(self, frame_class):
+        new_frame = frame_class(self)
+        if self._frame is not None:
+            self._frame.destroy()
+        self._frame = new_frame
+        self._frame.pack()
+
+
+class StartPage(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        tk.Label(self, text="Innovizer", font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
+        tk.Button(self, text="Start",
+                  command=lambda: master.switch_frame(PageOne)).pack()
+
+
+class PageOne(tk.Frame):
+
+    def button_command(self):
+        idee = ttk.Entry.get()
+        print(idee)
+
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        tk.Frame.configure(self)
+        tk.Label(self, text="Post an idea!", font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
+        tk.Button(self, text="Main menu",
+              command=lambda: master.switch_frame(StartPage)).pack()
+
+
+        ttk.Entry(self, text="idea").pack(pady=10)
+        tk.Button(self, text="post idea", font=("Arial", 18), command= "post_idea").pack(pady=20)
+
+
+
+
+
+if __name__ == "__main__":
+    app = SampleApp()
+    app.geometry("400x300")
+
+
+verbindung.close()
+app.mainloop()
